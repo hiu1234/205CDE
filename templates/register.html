@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{%block content%}
+<script type="text/javascript">
+var all_check_pass = 0;
+
+function check_username(){
+	var value = document.getElementById('reg_username').value;
+
+	var con = new XMLHttpRequest();
+	//con.responseType = 'json';
+	con.onreadystatechange = ()=>{
+		if (!con.response) return;
+	    a = JSON.parse(con.response)
+		if (a["used"]) {
+			document.getElementById('reg_username_exist').style.display = "flex";
+			all_check_pass = 1;
+		}else{
+			document.getElementById('reg_username_exist').style.display = "none";
+		}
+	}
+
+	json={"check": value};
+	send_json(json,con);
+	return value;
+}
+
+function check_password(){
+	var pass = document.getElementById('reg_pass').value;;
+	var repass = document.getElementById('reg_repass').value;
+	if (pass != repass) {
+		document.getElementById('reg_pass_alert').style.display = "flex";
+		all_check_pass = 1;
+	}else{
+		document.getElementById('reg_pass_alert').style.display = "none";
+	}
+
+
+	return pass;
+}
+
+function reg_submit(){
+	all_check_pass = 0;
+	var username = check_username();
+	var password = check_password();
+	var connection = new XMLHttpRequest();
+	connection.onreadystatechange = ()=>{
+		document.getElementById('display').innerHTML = "Success";
+		window.location.href = "/";
+	}
+
+	console.log(all_check_pass)
+	if (!all_check_pass) {
+		send_json({"username": username,"password": password},connection);
+	}
+}
+
+function send_json(json,connection){
+	connection.open('POST', window.location.href,false);
+	connection.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+	connection.send(JSON.stringify(json));
+}
+</script>
+
+
+<div class="row" style="width: 100%;height: 100%;vertical-align: middle;margin-top: -2em">
+	<div class="jumbotron align-self-center" style="margin: auto;background-color: #eeeeee" id="display">
+	  	<div class="input-group mb-3">
+		  <div class="input-group-prepend">
+		    <span class="input-group-text field">Username</span>
+		  </div>
+		  <input type="text" class="form-control" id="reg_username" onchange="check_username()" >
+		</div>
+
+		<div class="alert alert-danger" role="alert" id="reg_username_exist" style="display: none;">
+		  Username has been used
+		</div>
+
+		<div class="input-group mb-3">
+		  <div class="input-group-prepend">
+		    <span class="input-group-text field">Password</span>
+		  </div>
+		  <input type="password" class="form-control" id="reg_pass" >
+		</div>
+
+		<div class="input-group mb-3">
+		  <div class="input-group-prepend">
+		    <span class="input-group-text field" >Re-Enter Password</span>
+		  </div>
+		  <input type="password" class="form-control" id="reg_repass" >
+		</div>
+
+		<div class="alert alert-danger" role="alert" id="reg_pass_alert" style="display: none;">
+		  Password are not the same
+		</div>
+
+	    <button class="btn btn-primary" onclick="reg_submit()">Register</button>
+	  </form>
+	</div>
+</div>
+{%endblock%}

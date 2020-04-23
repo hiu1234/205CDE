@@ -1,0 +1,63 @@
+{% extends 'manage_base.html' %}
+
+{%block content%}
+<div class="jumbotron container-fluids" style="margin-left: 10%;margin-right: 10%;width: auto;background-color: #ffffff; background: rgba(255, 255, 255, 0.6); padding: 2%;height: auto;margin-top: 2em;">
+
+	<div class="jumbotron" style="background: rgba(255,255,255,0.7);">
+		<h2>Purchase Record</h2>
+		<hr>
+		<div class="rounded" style="background: #ffffff;overflow-x: scroll;width: 100%;padding: 1em;margin-bottom: 2em">
+			<table class="table">
+			  <thead>
+			    <tr>
+			      <th scope="col">#</th>
+			      <th scope="col">User</th>
+			      <th scope="col">Song</th>
+			      <th scope="col">Album</th>
+			      <th scope="col">Price</th>
+			      <th scope="col">Time</th>
+			      <th scope="col"></th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			  	{%for transection in data%}
+			    <tr>
+			      <th scope="row">{{loop.index}}</th>
+			      <td>{{transection["username"]}}</td>
+			      <td>{{transection["title"]}}</td>
+			      <td>{{transection["album"]}}</td>
+			      <td>$ {{transection["price"]}}</td>
+			      <td>{{transection["date"]}}</td>
+			      <td><button class="btn btn-danger" onclick="del_purchase_rec(this)">Delete</button></td>
+			    </tr>
+			    {%endfor%}
+			  </tbody>
+			</table>
+		</div>
+		<div class="row" style="width: auto;">
+	    <button type="button" class="btn btn-success col-sm-auto mr-auto" style="margin: auto;" onclick="del_purchase_submit()">Save</button>
+	</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+var del_purchase_list = {"content": []}
+
+function del_purchase_rec(element) {
+	var username = element.parentElement.parentElement.children[1].innerHTML;
+	var title = element.parentElement.parentElement.children[2].innerHTML;
+	del_purchase_list['content'].push({"username": username,"title": title});
+	element.parentElement.parentElement.style.display = 'none';
+}
+
+function del_purchase_submit() {
+	var connection = new XMLHttpRequest();
+	connection.open('POST', window.location.href);
+	connection.onreadystatechange = ()=>{
+		location.reload(true);
+	}
+	connection.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+	if (del_purchase_list["content"].length) connection.send(JSON.stringify(del_purchase_list));
+}
+</script>
+{%endblock %}

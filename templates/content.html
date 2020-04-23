@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{%block content%}
+
+<div class="row align-items-end rounded justify-content-start" style="width: 100%;height: 25em;margin-bottom: 2em">
+	<img class="img-thumbnail col-lg-auto " img_src="{{content['cover']}}" blur_bg="1" style="height: 10em;width: auto;margin-left: 2em;margin-bottom: 2em;margin-top: 2em ">
+	<div class="col-lg-auto rounded album_info" style="max-width: auto;margin-left: 2em;margin-bottom: 2em;margin-right: 2em;background: rgba(255,255,255,0.5);flex-grow: 100;padding: 1em;">
+		<h3 class="row" style="margin-left: 1vh;margin-bottom: 1em;width: auto;">{{content['album']}}</h3>
+        <hr>
+		<h5 class="row" style="margin-left: 1vh;margin-bottom: auto;width: auto;">{{content['artist']}}</h5>
+	</div>
+</div>
+<div class="row jumbotron" style="background-color: #eeeeee;width: 100%;padding: 2em;">
+	<h4 class="row" style="width: 100%;">Track</h4>
+	<hr class="row " style="width: 100%;">
+	<div class="row " style="width: 100%;overflow-x: scroll;">
+		<table class="table col-lg-auto" style="width: 100%;">
+		  <thead style="width: 100%">
+		    <tr>
+		      <th scope="col" style="width: 2%;text-align: center;">Track</th>
+		      <th scope="col" style="width: 70%">Title</th>
+		      <th scope="col"style="text-align: center;">Duration</th>
+		      <th scope="col"style="text-align: center;">Price</th>
+		      <th></th>
+		    </tr>
+		  </thead>
+		  <tbody style="width: 100%">
+			{%for track in content['track']%}
+		    <tr>
+		      <th scope="row" style="vertical-align: middle;width: 2%;text-align: center;">{{loop.index}}</th>
+		      <td style="vertical-align: middle;width: 68%">{{track["title"]}}</td>
+		      <td class=" duration_view" style="vertical-align: middle;text-align: center;" duration="{{track['duration']}}"></td>
+		      <td style="vertical-align: middle;text-align: center;">${{track["price"]}}</td>
+		      {%if track['download']%}
+		      <a href="/download/{{track['url']}}" download="{{track['title']}}" id="downloadnow" style="display: none;"></a>
+		      <td style="width: 10%;vertical-align: middle;"><button class="btn btn-info" onclick="document.getElementById('downloadnow').click()">Download</button></td>
+		      {%else%}
+		      <td style="width: 10%;vertical-align: middle;"><button class="btn btn-success" onclick="window.location.href ='/purchase/{{track['url']}}'">Buy</button></td>
+		      {%endif%}
+		    </tr>
+			{%endfor%}
+		  </tbody>
+		</table>
+		</ul>
+
+	</div>
+
+	
+</div>
+
+<style type="text/css">
+@media (max-width: 992px)
+{
+.album_info{
+      max-width: 100% !important;
+    }
+}
+</style>
+
+<script type="text/javascript">
+    var cal_duration = document.getElementsByClassName('duration_view');
+    for (cal of cal_duration){
+    	hr = null;
+    	sec = parseInt(cal.getAttribute('duration'))
+    	if (sec > 60) {
+    		min = Math.floor(sec/60); 
+    		sec = sec%60;
+    		if (min>60) {
+    			hr =  Math.floor(min/60);
+    		 	min = min%60;
+    		}
+    	}
+    	if (hr) {cal.innerHTML = hr+':'}
+    	else cal.innerHTML = '';
+    	min = String(min);
+    	sec = String(sec);
+    	if (min.length == 1) min = '0'+min;
+    	if (sec.length == 1) sec = '0'+sec;
+    	cal.innerHTML = cal.innerHTML+min+':'+sec;
+    }
+
+</script>
+
+{%endblock%}

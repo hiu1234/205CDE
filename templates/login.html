@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{%block content%}
+<script type="text/javascript">
+	var url = null;
+	{%if url%}
+	url = '{{url}}';
+	{%endif%}
+	function login() {
+    var data = {"username": document.getElementById('DropdownFormUsername').value,"password": document.getElementById('DropdownFormPassword1').value};
+    var connection = new XMLHttpRequest();
+    connection.open('POST', "/");
+    connection.onreadystatechange = ()=>{
+    	if (url) window.location.href = url;
+    	else window.location.href = connection.responseURL;
+    }
+    connection.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+    connection.send(JSON.stringify(data));
+}
+</script>
+
+<div class="row" style="width: 100%;height: 100%;vertical-align: middle;margin-top: -2em">
+	<div class="jumbotron align-self-center" style="margin: auto;background-color: #eeeeee">
+	  	<div class="input-group mb-3">
+		  <div class="input-group-prepend">
+		    <span class="input-group-text field" id="basic-addon1">Username</span>
+		  </div>
+		  <input type="text" class="form-control" id="DropdownFormUsername" >
+		</div>
+
+		<div class="input-group mb-3">
+		  <div class="input-group-prepend">
+		    <span class="input-group-text field" id="basic-addon1">Password</span>
+		  </div>
+		  <input type="password" class="form-control" id="DropdownFormPassword1" >
+		</div>
+
+	    <button class="btn btn-primary" onclick="login()">Sign in</button>
+	  <div class="dropdown-divider"></div>
+	  <a class="dropdown-item" href="/register.html">New around here? Sign up</a>
+	</div>
+</div>
+{%endblock%}

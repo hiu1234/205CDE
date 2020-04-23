@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{%from 'list_view.html' import all_view%}
+{%block content%}
+<div style="width: 100%;margin-bottom: 2em;">
+	<h1>{{title}}</h1>
+	<hr>
+	{%include 'carousel.html'%}
+	{%include 'entry.html'%}
+	<h1 style="margin-top: 2em">All</h1>
+	<hr>
+	{{all_view(data)}}
+</div>
+{%endblock%}

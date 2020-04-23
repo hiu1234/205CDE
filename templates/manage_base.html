@@ -1,0 +1,54 @@
+<!doctype html>
+<html style="height: 100%">
+  <head>
+    {% block head %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script type="text/javascript" src="/static/js/lodash.core.min.js"></script>
+    <script type="text/javascript" src="/static/js/management.js"></script>
+
+    {% block styles %}
+    <!-- Bootstrap CSS -->
+    {{ bootstrap.load_css() }}
+    {% endblock %}
+
+    <title>{{ title }}</title>
+    {% endblock %}
+  </head>
+  <body  style="height: 100%;">
+    <!-- Page content -->
+    <div id="html_background" style="height: 100%;width: 100%;position: fixed;top: 0;z-index: -1;">
+    </div>
+    {%if nav_item%}
+      {% include 'nav.html' %}
+    {%endif%}
+
+    {%block content%}{%endblock%}
+    
+    {% block scripts %}
+    <!-- Optional JavaScript -->
+    {{ bootstrap.load_js() }}
+    <script
+    src="/static/js/jquery-3.4.1.js"></script>
+    <script src="/static/js/three.r95.min.js"></script>
+    <script src="/static/js/vanta.net.min.js"></script>
+    <script>
+    VANTA.NET({
+      el: "#html_background",
+      mouseControls: false,
+      touchControls: false,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      color: 0xffffff,
+      backgroundColor: 0xb1246,
+      points: 9.00,
+      maxDistance: 13.00,
+      spacing: 14.00
+    })
+    </script>
+    {% endblock %}
+  </body>
+</html>

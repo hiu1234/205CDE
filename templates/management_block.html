@@ -1,0 +1,173 @@
+{%macro catalog_list_editor() -%}
+<div class="jumbotron" id="catalog" style="background: rgba(250, 250, 250, 0.8);">
+  <h2>Catalogs</h2>
+  <hr style="border-color: #000000;">
+  <p>Edit website catalog below:</p>
+  <div id="catalog_editor_div">
+    <div class="input-group mb-3" id="catalog_editor_template" style="display: none;">
+      <input type="text" class="form-control" placeholder="Catalog">
+      <div class="input-group-append">
+        <button class="btn btn-danger" type="button">Delete</button>
+      </div>
+    </div>
+    <script type="text/javascript">
+      for (catalog_item of catalogs)
+        new catalog_class(catalog_item);        
+    </script>
+  </div>
+  <button class="btn btn-success" type="button" onclick="addcatalog();">Add</button>
+</div>
+
+{%- endmacro%}
+
+<!-- Album catalog -->
+
+{%macro album_viewer(album_list) %}
+<div class="jumbotron" id="catalog" style="background: rgba(250, 250, 250, 0.8);">
+    <h2>Album</h2>
+    <hr style="border-color: #000000;">
+    <div class="row">
+        <div class="input-group mb-3 col-10">
+          <input type="text" class="form-control" id="search_bar" onkeydown="search(this)" placeholder="Search...">
+        </div>
+
+        <button type="button" class="btn btn-success col-2" style="height: 50%;width: auto;" onclick="newalbum();">New</button>
+    </div>
+    <h6>click to edit:</h6>
+
+    <div class="list-group" id="album_list_viewer_root" style="overflow-y: scroll;max-height: 40em;">
+      {{ album_list_editor(album_list)}}
+    </div>
+    <hr style="border-color: rgba(0,0,0,0);">
+    {{album_editor()}}
+</div>
+{% endmacro%}
+
+
+{%macro album_editor() %}
+<div class="row" style="display: none;" id="album_editor_area">
+  <div class="col-sm-4">
+    <div id="album_cover" style="width: 100%;height: 100%;display: flex;">
+      <img alt="..." class="img-thumbnail" style="max-width: 100%;max-height: 100%;display: none;margin: auto;">
+    </div>
+  </div>
+  <div class="col-sm-8">
+    <h3>Album info</h3>
+    <hr>
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text">Album name: </span>
+      </div>
+      <input type="text" class="form-control" placeholder="Album Name"  id="album_input">
+      
+      </div>
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" >Artist: </span>
+        </div>
+      <input type="text" class="form-control" placeholder="Artist" id="artist_input">
+      </div>
+      <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text">Catalog: </span>
+      </div>
+      <select class="form-control catalog_selector">
+      </select>
+      
+      </div>
+    <h3>Track</h3>
+    <hr>
+    <div id="album_edit_area" style="overflow-y: scroll;max-height: 20em;"></div>
+    {{upload()}}
+    <div id="album_edit_template" style="display: none;width: 100%;margin-bottom: 1em;">
+      <div class="row" style="margin: auto;">
+        <div class="col-sm-8">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Track title: </span>
+            </div>
+            <input class="form-control title_input" type="text" placeholder="Title">
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">$</span>
+            </div>
+            <input type="number" class="form-control price_input" placeholder="Price">
+            <div class="input-group-append">
+              <span class="input-group-text">.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="margin: auto;">
+          <div class="col-sm-4 mr-auto">
+            <div class="input-group mb-1" style="width: 100%">
+              <input type="text" class="form-control duration_input" placeholder="Duration" disabled>
+              <div class="input-group-append">
+                <span class="input-group-text" id="basic-addon2">Sec</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-auto">
+            <button class="btn btn-danger delete_btn" type="button">Delete</button>
+          </div>
+        </div>
+          <hr>
+        </div>
+      </div>
+</div>
+
+<div class="alert alert-warning alert-dismissible fade show" id="album_editor_alert" style="display: none;">
+  <strong>Warning!</strong> Please enter a valid value in all the fields before proceeding.
+</div>
+
+{%endmacro%}
+
+
+{%macro upload() %}
+<div class="row" id="upload_template" style="margin: auto;margin-bottom: 1em;display: none;">
+  <div class="col-2">
+    <button type="button" class="btn btn-info" style="">Upload</button>
+  </div>
+  <div class="col-10 upload_progress" style="width: 100%;display: none;">
+   <div class="progress row" style="width: 100%">
+      <div class="progress-bar" role="progressbar">0%</div>
+   </div>
+  </div>
+</div>
+<div style="display: none;margin: auto;width: 100%;height: 100%;vertical-align: middle;text-align: center;align-items: center;" id="upload_cover_template">
+  <button type="button" class="btn btn-info" style="margin: auto;">Upload Cover</button>
+  <div class="col-10 upload_progress" style="width: 100%;display: none;">
+   <div class="progress row" style="width: 100%">
+      <div class="progress-bar" role="progressbar">0%</div>
+   </div>
+  </div>
+</div>
+<script type="text/javascript">
+  var upload_btn_element = new file_upload();
+</script>
+{%endmacro%}
+
+
+
+{%macro album_list_editor(json) -%}
+<button type="button" class="list-group-item list-group-item-action" id="album_list_view_template" style="display: none;">
+  <div class="container">
+     <div class="row">
+        <div class="col-sm-4">
+              <img src="" alt="..." class="img-thumbnail" style="max-height: 7em;max-width: 100%">
+        </div>
+        <div class="col-sm row">
+          <div class="col-sm-auto mr-auto album_list_view_album"></div>
+          <div class="col-sm-auto album_list_view_artist"></div>
+        </div>
+    </div>
+  </div>
+</button>
+
+<script type="text/javascript">
+  var album_list_data = {{json|safe}}
+</script>
+{%- endmacro%}

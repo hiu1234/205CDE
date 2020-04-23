@@ -1,0 +1,23 @@
+{% extends 'manage_base.html' %}
+{% from 'management_block.html' import catalog_list_editor ,album_viewer%}
+{%block content%}
+<script type="text/javascript">
+  var catalogs = {{catalog_list|safe}};
+</script>
+<div class="jumbotron container-fluids" style="margin-left: 10%;margin-right: 10%;width: auto;background-color: #ffffff; background: rgba(255, 255, 255, 0.6); padding: 2%;height: auto;margin-top: 2em;">
+    
+        {{catalog_list_editor()}}
+        {{album_viewer(album_list)}}
+
+        <div class="row" style="width: auto;">
+            <button type="button" class="btn btn-success col-sm-auto mr-auto" style="margin: auto;" onclick="prepare_send()">Save</button>
+        </div>
+</div>
+
+    {% if album_list %}
+        <script type="text/javascript">
+            var album_list_data = {{json|safe}}
+            gen_list();        
+        </script>
+    {%endif%}
+{%endblock%}

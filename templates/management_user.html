@@ -1,0 +1,135 @@
+{% extends 'manage_base.html' %}
+
+{%block content%}
+	<div class="jumbotron container-fluids" style="margin-left: 10%;margin-right: 10%;width: auto;background-color: #ffffff; background: rgba(255, 255, 255, 0.6); padding: 2%;height: auto;margin-top: 2em;">
+		<div class="jumbotron" style="background: rgba(255,255,255,0.7);">
+		<h2>User</h2>
+		<hr>
+		<div class="row">
+			<table class="table rounded" style="padding: 1em;background-color: #ffffff;width: 100%">
+			  <thead>
+			    <tr>
+			      <th scope="col" style="width: 30%">Username</th>
+			      <th scope="col" style="width: 25%">Role</th>
+			      <th scope="col" style="width: 25%">Password</th>
+			      <th scope="col" style="width: 10%">Credit</th>
+			      <th scope="col" style="width: 10%"></th>
+			    </tr>
+			  </thead>
+			  <tbody id="user_entry_area">
+			  	<tr id="user_entry_template" style="display: none;">
+			      <td ><input type="text" class="form-control entry_username" placeholder="Username" value=""></td>
+			      <td >
+			      	<select class="custom-select entry_select" id="inputGroupSelect01">
+			      		{%for role in user['role']%}
+					    <option value="{{role['id']}}">{{role['name']}}</option>
+					    {%endfor%}
+					</select>
+			      </td>
+			      <td ><input type="text" class="form-control entry_password" placeholder="Password" value=""></td>
+			      <td ><input type="number" class="form-control entry_credit" placeholder="Credit"></td>
+			      <td ><button type="button" class="btn btn-danger entry_del_btn">Delete</button></td>
+			    </tr>
+			  	{%for user_entry in user['data']%}
+			    <tr class="user_entry">
+			      <td ><input type="text" class="form-control entry_username" placeholder="Username" value="{{user_entry['username']}}"></td>
+			      <td >
+			      	<select class="custom-select entry_select" id="inputGroupSelect01">
+			      		{%for role in user['role']%}
+					    <option value="{{role['id']}}" {%if role['id'] == user_entry['role_id']%}selected{%endif%}>{{role['name']}}</option>
+					    {%endfor%}
+					</select>
+			      </td>
+			      <td ><input type="text" class="form-control entry_password" placeholder="Password" value="{{user_entry['password']}}"></td>
+			      <td ><input type="number" class="form-control entry_credit" placeholder="Credit" value="{{user_entry['credit']}}"></td>
+			      <td ><button type="button" class="btn btn-danger entry_del_btn">Delete</button></td>
+			    </tr>
+			    {% endfor %}
+			  </tbody>
+			</table>
+		</div>
+		<button type="button" class="btn btn-success col-sm-auto mr-auto" onclick="user_entry_list.push(new user_entry)">Add</button>
+	</div>
+
+	<div class="row" style="width: auto;">
+	    <button type="button" class="btn btn-success col-sm-auto mr-auto" style="margin: auto;" onclick="user_entry_submit()">Save</button>
+	</div>
+</div>
+
+<script type="text/javascript">
+user_entry_list=[];
+
+class user_entry{
+	constructor(element){
+		if (!element) {
+			var template = document.getElementById('user_entry_template');
+			this.element = template.cloneNode(1);
+			this.element.style.display = "table-row";
+			this.new = 1;
+			document.getElementById('user_entry_area').appendChild(this.element);
+
+
+		}else this.element = element;
+		this.username = this.element.getElementsByClassName('entry_username')[0];
+		this.selector = this.element.getElementsByClassName('entry_select')[0];
+		this.delete_btn = this.element.getElementsByClassName('entry_del_btn')[0];
+		this.pass = this.element.getElementsByClassName('entry_password')[0];
+		this.credit = this.element.getElementsByClassName('entry_credit')[0];
+		this.selector_d = this.selector.options[this.selector.selectedIndex].value;
+		var self = this;
+		this.delete_btn.addEventListener('click',()=>{self.del();})
+	}
+
+	del(){
+		this.element.style.display = "none";
+		if(this.new) user_entry_list = user_entry_list.filter(item => item !== this);
+	}
+
+	json(){
+		var data = {};
+		if (this.new) {if (this.username.value && this.pass.value && this.credit.value) {
+			var duplicate = 0;
+			for(var x of user_entry_list){
+				if (x==this) continue;
+				if (this.username.value == x.username.value) {
+					duplicate = 1;
+					break;
+				}
+			}
+			if (duplicate) return {};
+			
+			return {"new": 1,"username": this.username.value,"password": this.pass.value,"role_id": this.selector.options[this.selector.selectedIndex].value,"credit": this.credit.value};
+		}}
+		if(this.element.style.display == "none")  data['deleted'] = 1;
+		if (this.username.defaultValue != this.username.value || this.selector.options[this.selector.selectedIndex].value != this.selector_d || this.pass.defaultValue != this.pass.value || this.credit != this.credit.defaultValue) {
+			if (!data['update']) data['update'] = [];
+			if (this.username.defaultValue != this.username.value && this.username.value ) data['update'].push({"username": this.username.value});
+			if (this.pass.defaultValue != this.pass.value && this.pass.value ) data['update'].push({"password": this.pass.value});
+			if (this.selector.options[this.selector.selectedIndex].value != this.selector_d) data['update'].push({"role_id": this.selector.options[this.selector.selectedIndex].value });
+			if (this.credit.defaultValue != this.credit.value && this.credit.value ) data['update'].push({"credit": this.credit.value});
+		}
+
+		if (data['deleted'] || data['update']) data["username"] = this.username.defaultValue;
+		return data;
+	}
+}
+
+for (var a of document.getElementsByClassName('user_entry')) user_entry_list.push(new user_entry(a));
+
+function user_entry_submit(){
+	var send = {"content": []};
+	for(var y of user_entry_list){
+		var temp = y.json();
+		if (temp['username']) send['content'].push(temp);
+	}
+
+	var connection = new XMLHttpRequest();
+	connection.open('POST', window.location.href);
+	connection.onreadystatechange = ()=>{
+		location.reload(true);
+	}
+	connection.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+	connection.send(JSON.stringify(send));
+}
+</script>
+{%endblock%}

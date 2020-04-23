@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{%block content%}
+<div class="container" style="width: 100%;height: 25em;text-align: center;">
+<h1 class="row" style="font-size: 400%;margin: auto;">Purchase</h1>
+<div class="jumbotron container-fluids" id="content_viewer" style="width: 100%">
+	<div class="row" style="width: 100%;margin: auto;">
+		<div class="col-sm-4" style="width: auto;">
+			<img src="{{data['cover']}}" class="rounded" style="width:100%;">
+		</div>
+		<div class="col-sm-8">
+			<div class="" style="width: 100%">
+				<div class=""><h4>Album</h4></div>
+				<hr class="" style="width: 100%">
+				<div class="" style="margin-bottom: 3em">{{data['album']}}</div>
+				<div class=""><h4>Artist</h4></div>
+				<hr class="" style="width: 100%">
+				<div class="" style="margin-bottom: 3em">{{data['artist']}}</div>
+				<div class=""><h4>Title</h4></div>
+				<hr class="" style="width: 100%">
+				<div class="" style="margin-bottom: 3em">{{data['title']}}</div>
+				<div class=""><h4>Duration</h4></div>
+				<hr class="" style="width: 100%">
+				<div class="duration_view" duration="{{data['duration']}}" style="margin-bottom: 3em"></div>
+				<div class=""><h4>Price</h4></div>
+				<hr class="" style="width: 100%">
+				<div class="" style="margin-bottom: 3em">{{data['price']}}</div>
+			</div>
+		</div>
+	</div>
+	{%if not purchased%}
+	<div class="row ">
+		 <button class="btn btn-primary" id="purchase_btn" style="margin: auto;" onclick="purchase()" >Purchase</button>
+	</div>
+	{%else%}
+	<div class="alert alert-success row" id="bought" role="alert" style="display: flex;margin-top: 1em;margin-left: 1em;margin-right: 1em">
+  		You have alread Owned this song
+	</div>
+	{%endif%}
+	<div class="alert alert-warning row" id="outof_credit" role="alert" style="display: none;margin-top: 1em;margin-left: 1em;margin-right: 1em">
+  		Credit not enough -- Current Credit:
+	</div>
+</div>
+	
+</div>
+
+<script type="text/javascript">
+var price = {{data['price']}};
+
+if (credit != null) {
+	if (credit - price < 0 ) {
+		document.getElementById('purchase_btn').setAttribute("disabled","disabled");
+		document.getElementById('outof_credit').innerHTML += credit;
+		document.getElementById('outof_credit').style.display = "block";
+	}
+}
+var cal_duration = document.getElementsByClassName('duration_view');
+for (cal of cal_duration){
+	hr = null;
+	sec = parseInt(cal.getAttribute('duration'))
+	if (sec > 60) {
+		min = Math.floor(sec/60); 
+		sec = sec%60;
+		if (min>60) {
+			hr =  Math.floor(min/60);
+		 	min = min%60;
+		}
+	}
+	if (hr) {cal.innerHTML = hr+':'}
+	else cal.innerHTML = '';
+	min = String(min);
+	sec = String(sec);
+	if (min.length == 1) min = '0'+min;
+	if (sec.length == 1) sec = '0'+sec;
+	cal.innerHTML = cal.innerHTML+min+':'+sec;
+}
+
+function getCookie(cname) {
+	var name = cname + "=";
+	var decodedCookie = decodeURIComponent(document.cookie);
+	var ca = decodedCookie.split(';');
+	for(var i = 0; i <ca.length; i++) {
+		var c = ca[i];
+		while (c.charAt(0) == ' ') {
+		  c = c.substring(1);
+		}
+		if (c.indexOf(name) == 0) {
+		  return c.substring(name.length, c.length);
+		}
+	}
+	return "";
+}
+
+function purchase() {
+		var a = getCookie("login_token")
+		if(!a)
+			window.location.href = "/login.html"
+		var connection = new XMLHttpRequest();
+		connection.open('POST', window.location.href);
+		connection.onreadystatechange = ()=>{
+			var content = document.getElementById('content_viewer')
+			document.getElementsByTagName('html')[0].innerHTML = connection.response 
+		}
+		connection.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+		connection.send(JSON.stringify({"user":a}));
+	}	
+</script>
+
+{%endblock%}

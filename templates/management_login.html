@@ -1,0 +1,59 @@
+{% extends 'manage_base.html' %}
+
+{%block content%}
+<div style="width: 100%;height: 100%;display: flex;">
+	<div class="border container row align-items-center rounded" style="margin: auto; background-color: rgba(255,255,255,0.8);width: 25em;height: 15em;vertical-align: middle;">
+		<div class="col align-self-center" style="align-items: center;text-align: center;">
+			<div class="input-group mb-3">
+			  <div class="input-group-prepend">
+			    <span class="input-group-text field" id="basic-addon1">Username</span>
+			  </div>
+			  <input type="text" class="form-control">
+			</div>
+
+			<div class="input-group mb-3">
+			  <div class="input-group-prepend">
+			    <span class="input-group-text field" id="basic-addon1">Password</span>
+			  </div>
+			  <input type="password" class="form-control">
+			</div>
+
+			<button type="button" class="btn btn-primary" onclick="check()">Login</button>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+function check(){
+	var fields = document.getElementsByClassName('input-group');
+	var ready = 0;
+	var auth = {};
+	for( var input of fields)
+	{
+		var text = input.getElementsByTagName('span')[0].innerHTML;
+		var content = input.getElementsByTagName('input')[0];
+		if (!content.value) {
+			content.placeholder = "Please input "+text;
+			ready = 1;
+		}
+		else{
+			auth[text.toLowerCase(0)] = content.value;
+		}
+	}
+
+	if (ready) {
+		return;
+	}
+	else{
+		var connection = new XMLHttpRequest();
+		connection.open('POST', window.location.href);
+		connection.onreadystatechange = ()=>{
+			window.location.href = connection.responseURL
+		}
+		connection.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+		connection.send(JSON.stringify(auth));
+	}
+
+}
+</script>
+{%endblock%}

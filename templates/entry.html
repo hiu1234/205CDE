@@ -1,0 +1,82 @@
+{% macro listview(listviewelement,entry_limit = 3,more_btn = 0) -%}
+<div style="height: auto;padding-top: 2em">
+  <h1 style="padding-bottom: 3px;border-bottom: 2px solid rgba(0,0,0,0.2);">{{listviewelement['title']}} Album</h1>
+    <div class="container-fluid">
+      <div class="row align-items-center album_list">
+        <a class="custom col-md-auto justify-content-start d-none d-lg-block"  role="button" data-slide="prev" style="margin: auto;">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </a>
+        {% for item in listviewelement['content'][:7]%}
+          {% if loop.index > entry_limit %}
+          <!--HIDDEN -->
+            <div class="hidden entry-row col-lg">
+          {% else %}
+            <div class="show entry-row col-lg">
+          {% endif%}
+           <div class="card">
+            <div class="row flex-nowrap justify-content-start no-gutters rounded border" style="height: 8em;opacity: 0;position: relative;cursor: pointer;" onclick="window.location.href ='/album/{{item['url'] }}' " >
+              <img class="col-4 rounded-left" img_src="{{item['cover']}}" blur_bg="1" mode="1" class="" style="width: 20%;height: 100%;align-self: center;object-fit: cover;object-position: center;max-width: 100%;">
+                <div class="col" style="width: 80%;padding: 1em;">
+                  <div class="rounded text-area" style="background-color: rgba(255,255,255,0.6);min-height: 100%;height: 100%;padding: .25em;width: auto;">
+                    <h6 style="border-bottom: 2px solid rgba(0,0,0,0.2);">{{item['album']}}</h6>
+                    <p >{{item['artist']}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {%endfor%}
+        {%if more_btn%}
+        <button class=" no-gutters btn d-block d-lg-none btn-light" style="margin-top: 2em;margin-left: 1.5%;width: 97%;color: #036bfc" onclick="window.location = '/catalog/{{listviewelement['title']}}'">More</button>
+        {%endif%}
+        <a class="custom col-md-auto justify-content-end d-none d-lg-block"  role="button" data-slide="next" style="margin: auto; ">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </a>
+      </div>
+    </div>
+</div>
+{%- endmacro %}
+
+
+
+
+{% block h_list %}
+<style type="text/css">
+.hidden
+{
+  display: none;
+}
+
+.hidden .text-area
+{
+  display: none;
+}
+
+.show
+{
+  max-width: 100%;
+}
+
+.entry-row
+{
+  transition: all 400ms;
+}
+
+@media (max-width: 992px)
+{
+.entry-row{
+      margin-top: 1em
+
+}
+
+</style>
+
+{% for lists in album_list %}
+    {{ listview(lists,entry_limit,more_btn) }}
+{%endfor%}
+
+<script type="text/javascript">
+for (var entry_list of document.getElementsByClassName('album_list'))
+  new entry_class(entry_list);
+</script>
+{% endblock %}

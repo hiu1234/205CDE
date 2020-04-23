@@ -1,0 +1,107 @@
+{% from 'bootstrap/nav.html' import render_nav_item, render_breadcrumb_item %}
+
+{% block nav %}
+<script type="text/javascript">
+{% if nav_item['username']%}
+  var credit = {{nav_item['username']['credit']}};
+{%else%}
+  var credit = null;
+{%endif%}
+function nav_toggle() {
+    var dd = document.getElementById('nav_login');
+    if(dd.style.display != "inline-block"){
+     dd.style.display = 'inline-block';
+    }
+    else dd.style.display = 'none';
+}
+
+function login() {
+    var data = {"username": document.getElementById('DropdownFormUsername').value,"password": document.getElementById('DropdownFormPassword1').value};
+    var connection = new XMLHttpRequest();
+    connection.open('POST', "/");
+    connection.onreadystatechange = ()=>{
+        location.reload(true);
+    }
+    connection.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+    connection.send(JSON.stringify(data));
+
+
+}
+
+function nav_logout() {
+    {%if management%}
+    document.cookie = "auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    {%else%}
+    document.cookie = "login_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    {%endif%}
+    location.reload(true);
+
+}
+</script>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                {% for item in nav_item['item'] %}
+                {{ render_nav_item(item[1], item[0], use_li=True,**item[2]) }}
+                {% endfor %}
+            </ul>
+            <ul class="navbar-nav">
+            {%if not nav_item['hideuser']%}
+              {% if not nav_item['username'] and not management%}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" onclick="nav_toggle()" aria-haspopup="true" aria-expanded="false">
+                  Login
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" id="nav_login" style="display: none;padding: 1em">
+                      <div class="form-group" style="margin:auto;">
+                        <label for="DropdownFormUsername">Username</label>
+                        <input type="text" class="form-control" id="DropdownFormUsername" placeholder="Username">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleDropdownFormPassword1">Password</label>
+                        <input type="password" class="form-control" id="DropdownFormPassword1" placeholder="Password">
+                      </div>
+                      <div class="form-check">
+                      </div>
+                      <button class="btn btn-primary" onclick="login()">Sign in</button>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/register.html">New around here? Sign up</a>
+                  </div>
+                </div>
+              </li>
+              {%else%}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" onclick="nav_toggle()" aria-haspopup="true" aria-expanded="false">
+                  Welcome! {{nav_item['username']['username']}}
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" id="nav_login" style="width: 12em;">
+                    <div class="container">
+                        {%if not management%}
+                        <div class="row"><div class="col"><b>Credit: </b>{{nav_item['username']['credit']}}</div></div>
+                        <div class="row"><a href="/library" class="col">My Library</a></div>
+                        <div class="row"><a href="/change_pass" class="col">Change password</a></div>
+                        {%endif%}
+                        <div class="row"><a href="" class="col" onclick="nav_logout();">Sign Out</a></div>
+                    </div>
+                </div>
+              </li>
+              {% endif%}
+            {% endif %}
+            </ul>
+        </div>
+</nav>
+
+{%if nav_patch %}
+<script type="text/javascript">
+  nav = document.getElementsByClassName('navbar-nav mr-auto')[0];
+  for (var x of nav.children){
+    console.log(x.children[0].innerHTML,x.children[0].innerHTML.search('{{title}}'))
+    if (x.children[0].innerHTML.search('{{title}}')< 0) x.children[0].classList.remove("active");
+  }
+</script>
+{%endif%}
+{% endblock nav %}

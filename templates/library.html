@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{%from 'list_view.html' import all_view%}
+{%block content%}
+<div style="width: 100%">
+	<h1>My Library</h1>
+	<hr>
+	{{all_view(data)}}
+</div>
+{%endblock%}

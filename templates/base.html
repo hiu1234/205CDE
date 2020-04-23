@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en" style="height: 100%;">
+  <head>
+    {% block head %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="Cache-control" content="private">
+
+    {% block styles %}
+    <!-- Bootstrap CSS -->
+    {{ bootstrap.load_css() }}
+    {% endblock %}
+
+    {% block scripts %}
+
+    <!-- Optional JavaScript -->
+    {{ bootstrap.load_js() }}
+    <script
+        src="/static/js/jquery-3.4.1.js">
+        </script>
+    <script type="text/javascript" src="/static/js/common.js"></script>
+    {% endblock %}
+
+    <title>{{title}}</title>
+    {% endblock %}
+  </head>
+  <body style="background: white;height: 100%;">
+    {% if nav_item  %}
+        {% include 'nav.html' %}
+    {%endif%}
+    <!-- page content -->
+    <div class="container" style="width: 100%;height: 100%; max-width:90%;margin-top: 2em;margin-bottom: 2em">
+        {% block content %}{% endblock %}
+    </div>
+  </body>
+  {%block script%}
+  <script type="text/javascript">
+    web_img = document.getElementsByTagName('img');
+    for (img of web_img){
+        new image_class(img).init();
+    }
+    web_body = document.getElementsByTagName('body')[0];
+    web_width = web_body.clientWidth;
+    web_height = web_body.clientHeight;
+    web_body.onresize = function(){
+        w_change = (web_body.clientWidth-web_width)/web_width;
+        h_change = (web_body.clientHeight-web_height)/web_height;
+        if (w_change < 0) w_change = -w_change;
+        if (h_change < 0) h_change = -h_change;
+        if (w_change > 0.25 || h_change > 0.25) {
+            web_width = web_body.clientWidth;
+            web_height = web_body.clientHeight;
+            for (img of web_img){
+              img.class.resize();
+            }
+        }
+    }
+
+  </script>
+  {%endblock%}
+
+<style type="text/css">
+  .custom .carousel-control-prev-icon {
+ background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E")!important; opacity: 0.8;
+}
+
+ .custom .carousel-control-next-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E")!important; opacity: 0.8;
+}
+</style>
+</html>

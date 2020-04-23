@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{%block content%}
+<div class="container">
+	<h1 class="row" style="font-size: 200%">Thanks For Purchase</h1>
+	<div class="jumbotron container">
+		<div class="row" ><h1 style="font-size: 200%;margin: auto;">Order</h1></div>
+		<div class="row" style="margin-top: 5em">
+			<div class="col-3">Purchase detail:</div>
+			<div class="col container">
+				<div class="row"><div class="col-lg-2">Album:</div>  <div class="col-lg-auto">{{song_info['album']}}</div></div>
+				<div class="row"><div class="col-lg-2">Artist:</div>  <div class="col-lg-auto">{{song_info['artist']}}	</div></div>
+				<div class="row"><div class="col-lg-2">Title:</div> <div class="col-lg-auto">{{song_info['title']}}</div></div>
+				<div class="row"><div class="col-lg-2">Price:</div> <div class="col-lg-auto">{{song_info['price']}}</div></div>
+			</div>
+		</div>
+		<hr style="margin-top: 5em">
+		<div class="row">
+			<div class="col-md-auto">
+				Purchase reference Number:
+			</div>
+			<div class="col">
+				{{pid}}
+			</div>
+		</div>
+		<hr style="margin-top: 5em">
+		<div class="row">
+			<button style="margin: auto;" class="btn btn-success" onclick="document.getElementById('downloadnow').click()">Download Now</button>
+		</div>
+	</div>
+</div>
+<a href="{{url}}" download="{{song_info['title']}}" id="downloadnow" style="display: none"></a>
+{%endblock%}
